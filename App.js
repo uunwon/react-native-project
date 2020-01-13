@@ -10,7 +10,7 @@ export default class App extends React.Component { //function은 state를 다루
     super(props); //React.Component가 초기에 가진 성질을 App이라는 Class component 로 그대로 가져와라
     this.state = { //[{} <- object 모양 //초기 state
       inputValue: '',
-      todos: [1,2,3,4]
+      todos: []
     }
   }
 
@@ -19,11 +19,16 @@ export default class App extends React.Component { //function은 state를 다루
       <Listitem
         name={item.title}
         isComplete={item.iscomplete}
-        changeComplete={() => {
+        changeComplete={() => { //변경 사항을 나타내기 위한 함수 (익명함수에 화살표함수)
           const newTodo = [...this.state.todos]
           newTodo[index].iscomplete = !newTodo[index].iscomplete
           this.setState({ todos: newTodo })
-        }} />
+        }}
+        deleteItem={() => {
+          const newTodo = [...this.state.todos]
+          newTodo.splice(index, 1) //삭제가 실행되면 자기 자신의 index를 splice (자름)
+          this.setState({ todos: newTodo })
+        }}  />
     );
   }
 
