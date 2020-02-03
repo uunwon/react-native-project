@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
+import { StyleSheet, View, FlatList, AsyncStorage } from 'react-native';
 import Header from './app/components/Header';
 import Subtitle from './app/components/Subtitle';
 import Input from './app/components/Input';
@@ -8,10 +8,25 @@ import Listitem from './app/components/Listitem';
 export default class App extends React.Component { //function은 state를 다루지 못하기에 class로 !
   constructor(props) { //생성자
     super(props); //React.Component가 초기에 가진 성질을 App이라는 Class component 로 그대로 가져와라
-    this.state = { //[{} <- object 모양 //초기 state
+    this.state = { //{} <- 객체object 모양 //초기 state
       inputValue: '',
-      todos: []
+      todos: [] //[] <- 배열array 모양
     }
+  }
+  
+  componentWillMount(){ //리액트가 화면에 렌더링=마운트 되는 걸(컴포넌트 보여지기 전에 하는 것!)
+    this.getData()
+  }
+  storeData=()=>{ //데이터 저장
+    AsyncStorage.setItem('@todo:state', JSON.stringify(this.state)); //todo라는 앱 이름의 state를 여기 저장하겠다
+  }
+
+  getData=() =>{ //데이터 가져오는
+    AsyncStorage.getItem('@todo:state').then((state)=>{
+      if(state != null){
+        this.setState(JSON.parse(state));
+      }
+    })
   }
 
   _makeTodoItem = ({ item, index }) => { //method 선언
@@ -22,12 +37,12 @@ export default class App extends React.Component { //function은 state를 다루
         changeComplete={() => { //변경 사항을 나타내기 위한 함수 (익명함수에 화살표함수)
           const newTodo = [...this.state.todos]
           newTodo[index].iscomplete = !newTodo[index].iscomplete
-          this.setState({ todos: newTodo })
+          this.setState({ todos: newTodo }, this.storeData)
         }}
         deleteItem={() => {
           const newTodo = [...this.state.todos]
           newTodo.splice(index, 1) //삭제가 실행되면 자기 자신의 index를 splice (자름)
-          this.setState({ todos: newTodo })
+          this.setState({ todos: newTodo }, this.storeData)
         }}  />
     );
   }
@@ -44,7 +59,7 @@ export default class App extends React.Component { //function은 state를 다루
       this.setState({
         inputValue: '',
         todos: prevTodo.concat(newTodo)
-      });
+      }, this.storeData);
     }
   }
 
