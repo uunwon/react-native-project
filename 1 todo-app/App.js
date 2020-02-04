@@ -17,6 +17,7 @@ export default class App extends React.Component { //function은 state를 다루
   componentWillMount(){ //리액트가 화면에 렌더링=마운트 되는 걸(컴포넌트 보여지기 전에 하는 것!)
     this.getData()
   }
+  
   storeData=()=>{ //데이터 저장
     AsyncStorage.setItem('@todo:state', JSON.stringify(this.state)); //todo라는 앱 이름의 state를 여기 저장하겠다
   }
