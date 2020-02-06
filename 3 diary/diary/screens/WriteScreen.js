@@ -1,8 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, View, Dimensions } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Dimensions, Image } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import WriteHeader from '../components/WriteHeader';
 import uuid from 'uuid/v1';
+import * as ImagePicker from 'expo-image-picker';
+import * as Permissions from 'expo-permissions';
 
 const { width, height } = Dimensions.get('window');
 
@@ -18,6 +20,7 @@ export default class WriteScreen extends React.Component {
         this.state = { //기억하고 있어야 할 것들 state 에 작성!!!! ★
             inputTitle: '',
             inputContent: '',
+            imageUri:'',
         }
     }
     
@@ -31,12 +34,19 @@ export default class WriteScreen extends React.Component {
 
     _getToday = () => { //오늘 날짜를 받아올 함수
         tyear = (new Date().getFullYear()).toString()
-        tmonth = (new Date().getMonth()).toString()
+        tmonth = (new Date().getMonth()+1).toString()
         tday = (new Date().getDate()).toString()
+        if(parseInt(tmonth) < 10){
+            tmonth = '0' + tmonth
+        }
+        if(parseInt(tday) < 10){
+            tday = '0' + tday
+        }
+        return (tyear +'-' + tmonth + '-' + tday)
     }
 
     _saveText = () => {
-        if (this.state.inputTitle !== ''){
+        if (this.state.inputTitle !== ''){ //IF 제목이 있으면 저장해라!
             const id = uuid()
             const date = this._getToday()
             const newpost = {
@@ -44,18 +54,41 @@ export default class WriteScreen extends React.Component {
                 title: this.state.inputTitle,
                 content: this.state.inputContent,
                 date: date,
+                imageUri: this.state.imageUri,
             }
             this.setState(
-                { inputTitle: '', inputContent: '', }
+                { inputTitle: '', inputContent: '', imageUri:'', }
             )
+            this.props.navigation.navigate('MainScreen', {myparam:newpost})
+        }else{ //ELSE 암것도 없으면 화면만 이동시켜라~
+            this.props.navigation.navigate('MainScreen')
         }
     }
+
+    _selectImage = async () => {
+        /*if (Constants.platform.ios) { //아이폰 개발시에는 이것도 추가해야함 ~~
+            const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+            if (status !== 'granted') {
+              alert('Sorry, we need camera roll permissions to make this work!');
+            }
+          }*/
+
+        let result = await ImagePicker.launchImageLibraryAsync({
+          allowsEditing: true,
+        });
+    
+        if (!result.cancelled) {
+          this.setState({ imageUri: result.uri });
+        }
+      };
 
     render(){
         return (
             <SafeAreaView style={styles.container}>
                 <View style = {styles.contentContainer}>
-                    <WriteHeader saveProps={this._saveText}/>
+                    <WriteHeader 
+                        saveProps={this._saveText}
+                        selectImage={this._selectImage}/>
                     <TextInput
                         onChangeText= {this._changeTitle}
                         value = {this.state.inputTitle}
@@ -63,6 +96,11 @@ export default class WriteScreen extends React.Component {
                         placeholder= "제목을 입력하세요"
                         style={styles.title}
                         returnKeyType="done" />
+
+                    {this.state.imageUri?
+                       <Image source={{uri:this.state.imageUri}} style={{width:200, height:200}}/>:
+                       null }
+                    
                     <TextInput
                         onChangeText= {this._changeContent}
                         value = {this.state.inputContent}

@@ -5,7 +5,7 @@ import { withNavigation } from 'react-navigation';
 
 const { width, height } = Dimensions.get('window');
 
-const DetailHeader = ({navigation}) => {
+const DetailHeader = ({navigation, deleteProps}) => {
     return(
         <View style={styles.header}>
         <View style={styles.container}>
@@ -19,7 +19,7 @@ const DetailHeader = ({navigation}) => {
 
             <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => {navigation.goBack()}}
+                onPress={() => {deleteProps()}}
                 hitSlop={{top:2, bottom:2, left:2, right:2}}>
                 <Ionicons name= "ios-close" size={25} color={'#7a7171'}/>
             </TouchableOpacity>
