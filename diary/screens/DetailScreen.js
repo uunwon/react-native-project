@@ -18,12 +18,12 @@ export default class DetailScreen extends React.Component {
           <View>
             <View style = {styles.detailbox}>
               <Text style={styles.detailtitle}>
-                제목 : {this.post.title}
+                [ {this.post.title} ]
               </Text>
             </View>
             <View style={styles.detailbox}>
               <Text style={styles.detailcontent}>
-                내용 : {this.post.content}
+                {this.post.content}
               </Text>
             </View>
           </View>
@@ -45,12 +45,13 @@ const styles = StyleSheet.create({
   detailbox:{
     marginVertical:30,
     marginLeft: 30,
-    borderLeftColor: 'gray',
+    borderLeftColor: 'lightblue',
     borderLeftWidth: 5,
     paddingLeft: 20,
   },
   detailtitle:{
     fontSize: 40,
+    fontWeight: 'bold',
   },
   detailcontent:{
     fontSize: 20,

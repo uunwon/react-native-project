@@ -35,7 +35,7 @@ const BaseNavi = createBottomTabNavigator(
   {
     tabBarOptions: {
       showLabel: false,
-      activeTintColor: '#f7c00f',
+      activeTintColor: 'lightblue',
     }
   },
 );
